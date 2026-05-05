@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard | Cybersecurity Training</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="menu-screen">
+            <h1>PhishGuard 🚀</h1>
+            <p>Can you spot the scam? Choose your level to start.</p>
+            <div class="difficulty-options">
+                <button onclick="startGame('easy')">Easy (30s)</button>
+                <button onclick="startGame('medium')">Medium (20s)</button>
+                <button onclick="startGame('hard')">Hard (15s)</button>
+            </div>
+        </div>
+
+        <div id="game-screen" style="display: none;">
+            <div class="header-info">
+                <span id="progress">Email 1 of 0</span>
+                <span id="timer-display">Time: 30s</span>
+            </div>
+
+            <div class="email-container">
+                <div class="email-header">
+                    <p id="email-sender"><strong>From:</strong> loading...</p>
+                    <p id="email-subject"><strong>Subject:</strong> loading...</p>
+                </div>
+                <div class="email-content">
+                    <p id="email-body">Email content loading here...</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-legit" onclick="handleAnswer('legitimate')">Legitimate</button>
+                <button class="btn-phish" onclick="handleAnswer('phishing')">Phishing</button>
+            </div>
+        </div>
+
+        <div id="results-screen" style="display: none;">
+            <h2>Quiz Complete!</h2>
+            <h1 id="final-score">Final Score: 0</h1>
+            <button onclick="restartGame()">Try Again</button>
+        </div>
+    </div>
+
+    <script src="Member5.js"></script>
+    <script src="quiz1.js"></script>
+
+</body>
+</html>

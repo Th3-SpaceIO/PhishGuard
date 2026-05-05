@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Horizontal center */
+    align-items: center;     /* Vertical center */
+    min-height: 100vh;       /* Full height of the screen */
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.container {
+    width: 90%;
+    max-width: 600px;        /* Limits how wide the quiz gets */
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;      /* Centers the text and buttons inside */
+}
+.email-container {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;        /* Keeps the actual email text left-aligned for readability */
+    min-height: 200px;
+}
+
+.email-header {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+#email-body {
+    white-space: pre-wrap; /* This ensures the Nigerian data keeps its line breaks */
+    line-height: 1.6;
+}
+.header-info {
+    display: flex;
+    justify-content: space-between; /* Puts progress on left, timer on right */
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #555;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;               /* Puts space between the two buttons */
+    margin-top: 20px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    transition: 0.3s;
+}
