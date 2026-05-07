@@ -113,4 +113,4 @@ function endGame() {
 function restartGame() {
     document.getElementById('results-screen').style.display = 'none';
     document.getElementById('menu-screen').style.display = 'block';
-}
+} 
