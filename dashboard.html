@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard - Progress Dashboard</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f8f9fa;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #6c757d;
+            --color-text-tertiary: #adb5bd;
+            --color-border-primary: #dee2e6;
+            --color-border-secondary: #e9ecef;
+            --color-border-tertiary: #f1f3f4;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        /* App container */
+        .app {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        /* Card component */
+        .card {
+            background: var(--color-background-primary);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 0.5px solid var(--color-border-tertiary);
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: #1B4F8C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        .nav-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Dashboard padding */
+        .dash-pad {
+            padding: 20px;
+        }
+
+        /* Page title */
+        .page-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin-bottom: 14px;
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-md);
+            padding: 12px 14px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--color-text-tertiary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-val {
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Chart section */
+        .chart-wrap {
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin-bottom: 12px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .bar-cat {
+            min-width: 80px;
+            color: var(--color-text-secondary);
+            font-size: 11px;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--color-background-secondary);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 8px;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        .bar-pct {
+            min-width: 30px;
+            text-align: right;
+            color: var(--color-text-secondary);
+            font-size: 11px;
+        }
+
+        /* History section */
+        .history-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin-bottom: 10px;
+        }
+
+        .history-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 0.5px solid var(--color-border-tertiary);
+            font-size: 12px;
+        }
+
+        .history-row:last-child {
+            border-bottom: none;
+        }
+
+        .hist-session {
+            color: var(--color-text-secondary);
+        }
+
+        .hist-score {
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .hist-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .hist-badge.high {
+            background: #EAF3DE;
+            color: #27500A;
+        }
+
+        .hist-badge.mid {
+            background: #FAEEDA;
+            color: #633806;
+        }
+
+        .hist-badge.low {
+            background: #FCEBEB;
+            color: #791F1F;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 0.5px solid #1B4F8C;
+            background: #1B4F8C;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #163a70;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .app {
+                padding: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .stat-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 12px;
+            }
+
+            .stat-label {
+                margin-bottom: 0;
+            }
+
+            .bar-cat {
+                min-width: 70px;
+                font-size: 10px;
+            }
+
+            .history-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app {
+                padding: 2rem 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .app {
+                padding: 2rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="card">
+            <div class="nav">
+                <div class="nav-logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 16 16">
+                            <path d="M8 1L2 4v4c0 3.3 2.6 6.4 6 7 3.4-.6 6-3.7 6-7V4L8 1z"/>
+                        </svg>
+                    </div>
+                    PhishGuard
+                </div>
+                <div class="nav-meta">
+                    <button class="btn" onclick="startNewQuiz()">New quiz</button>
+                </div>
+            </div>
+            
+            <div class="dash-pad">
+                <h1 class="page-title">Your progress</h1>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total score</div>
+                        <div class="stat-val" id="total-points">0</div>
+                        <div class="stat-sub">points earned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Accuracy</div>
+                        <div class="stat-val" id="accuracy">0%</div>
+                        <div class="stat-sub">overall correct</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Best streak</div>
+                        <div class="stat-val" id="best-streak">0</div>
+                        <div class="stat-sub">in a row</div>
+                    </div>
+                </div>
+
+                <!-- Category Performance Chart -->
+                <div class="chart-wrap">
+                    <h2 class="chart-title">Accuracy by category</h2>
+                    <div id="category-chart">
+                        <!-- Chart bars will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Recent Sessions -->
+                <h2 class="history-title">Recent sessions</h2>
+                <div id="recent-sessions">
+                    <!-- Session rows will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="storage.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
