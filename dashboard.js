@@ -1,6 +1,9 @@
 // Dashboard functions for PhishGuard
 // This file updates progress dashboard with quiz data
 
+// Global chart instance
+let categoryChart = null;
+
 // Initialize dashboard when page loads
 function initializeDashboard() {
     updateStats();
@@ -76,8 +79,12 @@ function updateChart() {
     let allResults = getScoreHistory();
     let categoryData = calculateCategoryData(allResults);
     
-    let chartContainer = document.getElementById('category-chart');
-    chartContainer.innerHTML = '';
+    let ctx = document.getElementById('category-chart').getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (categoryChart) {
+        categoryChart.destroy();
+    }
     
     // Colors for different categories
     let colors = {
@@ -88,18 +95,94 @@ function updateChart() {
         'Academic': '#1D9E75'
     };
     
-    // Create a bar for each category
-    for (let category in categoryData) {
-        let accuracy = categoryData[category];
-        let color = colors[category] || '#6c757d';
-        let barRow = createBar(category, accuracy, color);
-        chartContainer.appendChild(barRow);
-    }
+    // Prepare data for Chart.js
+    let labels = Object.keys(categoryData);
+    let data = Object.values(categoryData);
+    let backgroundColors = labels.map(category => colors[category] || '#6c757d');
     
     // Show message if no data
-    if (Object.keys(categoryData).length === 0) {
-        chartContainer.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">No quiz data available yet</div>';
+    if (labels.length === 0) {
+        ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillStyle = '#6c757d';
+        ctx.textAlign = 'center';
+        ctx.fillText('No quiz data available yet', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
     }
+    
+    // Create new Chart.js chart
+    categoryChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Accuracy %',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#1a1a1a',
+                    titleFont: {
+                        size: 13,
+                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                    },
+                    bodyFont: {
+                        size: 12,
+                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                    },
+                    padding: 10,
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + '% accuracy';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        },
+                        font: {
+                            size: 11,
+                            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                        },
+                        color: '#6c757d'
+                    },
+                    grid: {
+                        color: '#e9ecef',
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 11,
+                            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                        },
+                        color: '#6c757d'
+                    },
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Calculate accuracy for each category
@@ -110,6 +193,11 @@ function calculateCategoryData(allResults) {
     for (let i = 0; i < allResults.length; i++) {
         let session = allResults[i];
         let category = session.category || 'Mixed';
+        
+        // Skip if category is null, undefined, or empty string
+        if (!category || category === 'null' || category === 'undefined') {
+            continue;
+        }
         
         if (!categoryStats[category]) {
             categoryStats[category] = {
@@ -130,21 +218,6 @@ function calculateCategoryData(allResults) {
     }
     
     return categoryAccuracy;
-}
-
-// Create a bar for the chart
-function createBar(category, accuracy, color) {
-    let barRow = document.createElement('div');
-    barRow.className = 'bar-row';
-    
-    barRow.innerHTML = 
-        '<div class="bar-cat">' + category + '</div>' +
-        '<div class="bar-track">' +
-            '<div class="bar-fill" style="width: ' + accuracy + '%; background: ' + color + '"></div>' +
-        '</div>' +
-        '<div class="bar-pct">' + accuracy + '%</div>';
-    
-    return barRow;
 }
 
 // Update the recent sessions list
@@ -189,9 +262,15 @@ function createSessionRow(session, sessionNumber) {
     // Get the performance level
     let performanceLevel = getPerformanceLevel(session.accuracy);
     
+    // Handle null/undefined category
+    let displayCategory = session.category;
+    if (!displayCategory || displayCategory === 'null' || displayCategory === 'undefined') {
+        displayCategory = 'Mixed';
+    }
+    
     sessionRow.innerHTML = 
         '<div class="hist-session">' +
-            'Session ' + sessionNumber + ' · ' + session.difficulty + ' · ' + session.category +
+            'Session ' + sessionNumber + ' · ' + session.difficulty + ' · ' + displayCategory +
             '<br><small style="color: #adb5bd; font-size: 10px;">' + formattedDate + '</small>' +
         '</div>' +
         '<div style="display: flex; align-items: center; gap: 8px;">' +
@@ -215,7 +294,7 @@ function getPerformanceLevel(accuracy) {
 
 // Start a new quiz (go to quiz page)
 function startNewQuiz() {
-    window.location.href = 'phishguard_quiz_ui_mockup.html';
+    window.location.href = 'index.html';
 }
 
 // Refresh all dashboard data

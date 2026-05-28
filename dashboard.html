@@ -153,6 +153,10 @@
             margin-bottom: 12px;
         }
 
+        #category-chart {
+            max-height: 200px;
+        }
+
         .bar-row {
             display: flex;
             align-items: center;
@@ -364,9 +368,7 @@
                 <!-- Category Performance Chart -->
                 <div class="chart-wrap">
                     <h2 class="chart-title">Accuracy by category</h2>
-                    <div id="category-chart">
-                        <!-- Chart bars will be dynamically inserted here -->
-                    </div>
+                    <canvas id="category-chart"></canvas>
                 </div>
 
                 <!-- Recent Sessions -->
@@ -379,6 +381,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="storage.js"></script>
     <script src="dashboard.js"></script>
 </body>
