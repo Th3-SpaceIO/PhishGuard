@@ -7,12 +7,22 @@ let currentDifficulty = '';
 
 // 1. Start the Game
 function startGame(level) {
-    // Map "hard" to Member 5's "difficult" label
-    let searchLevel = level === 'hard' ? 'difficult' : level;
+    // Member 5 uses "hard" directly now instead of "difficult", 
+    // but we use a fallback just in case some items still use the old label.
+    let searchLevel = level;
     currentDifficulty = level;
 
-    // Filter the master database from Member5.js
-    filteredEmails = emailDatabase.filter(email => email.difficulty_level === searchLevel);
+    // Filter the master database using the new 'difficulty' key name
+    filteredEmails = emailDatabase.filter(email => {
+        // Safe fallback: read their new 'difficulty' key, or use 'difficulty_level' if it's an old item
+        const emailLevel = email.difficulty || email.difficulty_level;
+        
+        // Match 'hard' to either 'hard' or 'difficult' to cover all bases
+        if (searchLevel === 'hard') {
+            return emailLevel === 'hard' || emailLevel === 'difficult';
+        }
+        return emailLevel === searchLevel;
+    });
     
     if (filteredEmails.length === 0) {
         alert("No emails found for this level!");
