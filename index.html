@@ -44,11 +44,16 @@
         <div id="results-screen" style="display: none;">
             <h2>Quiz Complete!</h2>
             <h1 id="final-score">Final Score: 0</h1>
-            <button onclick="restartGame()">Try Again</button>
+            <div class="action-buttons">
+                <button onclick="restartGame()">Try Again</button>
+                <button onclick="viewDashboard()">View Dashboard</button>
+            </div>
         </div>
     </div>
 
     <script src="Member5.js"></script>
+    <script src="storage.js"></script>
+    <script src="scoring.js"></script>
     <script src="quiz1.js"></script>
 
 </body>
